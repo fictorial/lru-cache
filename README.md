@@ -16,11 +16,11 @@ object causes the least-recently-used item to be purged.
     c.set 'D', 4  # A purged; least to most used: BCD
     c.get 'B'     # least to most used: CDB
     c.set 'E', 5  # C purged; least to most used: DBE
-    c.remove 'B'  # least to most used: D used now is E
+    c.remove 'B'  # least to most used: DE
 
 ## Tests
 
-Run unit tests with: `nodeunit ./lru-cache.coffee`
+Run unit tests with: `nodeunit lru-cache.coffee`
 
 ## Notes
 
