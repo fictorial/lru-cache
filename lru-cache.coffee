@@ -33,6 +33,7 @@ class LRUCache
         @h = undefined
       e.n = e.p = undefined
       delete @m[e.k]
+      --@n
     e
 
   get: (k) ->
@@ -55,6 +56,7 @@ class LRUCache
     e = @m[k]
     return undefined unless e?
     delete @m[e.k]
+    --@n
     if e.n? and e.p? # middle
       e.p.n = e.n
       e.n.p = e.p
@@ -76,5 +78,7 @@ class LRUCache
       n = n.n
     s += ']'
     s
+
+  size: -> @n
 
 exports.LRUCache = LRUCache

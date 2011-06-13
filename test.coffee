@@ -8,6 +8,7 @@ exports.test_one_entry = (t) ->
   c.put 'a', 1
   t.ok (c.has 'a'), 'key should be cached'
   t.equal (c.get 'a'), 1, 'value should be set'
+  t.equal c.size(), 1, 'only one entry added'
   t.done()
 
 exports.test_two_entries = (t) ->
@@ -18,6 +19,7 @@ exports.test_two_entries = (t) ->
   t.ok (c.has 'b'), 'second entry should be present'
   t.equal (c.get 'a'), 1, 'first entry value should not have changed'
   t.equal (c.get 'b'), 2, 'second entry value should not have changed'
+  t.equal c.size(), 2, 'two entries added'
   t.done()
 
 exports.test_purge_with_limit_one = (t) ->
@@ -28,6 +30,7 @@ exports.test_purge_with_limit_one = (t) ->
   t.ok (c.has 'b'), 'second entry should be present'
   t.equal (c.get 'a'), undefined, 'first entry value should have been purged'
   t.equal (c.get 'b'), 2, 'second entry value should not have changed'
+  t.equal c.size(), 1, 'two entries added, one purged'
   t.done()
 
 exports.test_purge_with_limit_two = (t) ->
@@ -41,6 +44,7 @@ exports.test_purge_with_limit_two = (t) ->
   t.equal (c.get 'a'), undefined, 'first entry value should have been purged'
   t.equal (c.get 'b'), 2, 'second entry value should not have changed'
   t.equal (c.get 'c'), 3, 'third entry value should have been set'
+  t.equal c.size(), 2, 'three entries added, two purged'
   t.done()
 
 exports.test_remove_with_one_entry = (t) ->
@@ -49,6 +53,7 @@ exports.test_remove_with_one_entry = (t) ->
   c.remove 'a'
   t.ok (not c.has 'a'), 'first entry should have been removed'
   t.equal (c.get 'a'), undefined, 'first entry value should have been removed'
+  t.equal c.size(), 0, 'one entry added, one entry removed'
   t.done()
 
 exports.test_remove_first_of_two_entries = (t) ->
@@ -60,6 +65,7 @@ exports.test_remove_first_of_two_entries = (t) ->
   t.equal (c.get 'a'), undefined, 'first entry value should have been removed'
   t.ok (c.has 'b'), 'second entry should be present'
   t.equal (c.get 'b'), 2, 'second entry value should have been set'
+  t.equal c.size(), 1, 'two entries added, one entry removed'
   t.done()
 
 exports.test_remove_second_of_two_entries = (t) ->
@@ -71,6 +77,7 @@ exports.test_remove_second_of_two_entries = (t) ->
   t.equal (c.get 'b'), undefined, 'second entry value should have been removed'
   t.ok (c.has 'a'), 'first entry should be present'
   t.equal (c.get 'a'), 1, 'first entry value should have been set'
+  t.equal c.size(), 1, 'two entries added, one entry removed'
   t.done()
 
 exports.test_remove_second_of_three_entries = (t) ->
@@ -85,6 +92,7 @@ exports.test_remove_second_of_three_entries = (t) ->
   t.equal (c.get 'a'), 1, 'first entry value should have been set'
   t.ok (c.has 'c'), 'third entry should be present'
   t.equal (c.get 'c'), 3, 'third entry value should have been set'
+  t.equal c.size(), 2, 'three entries added, one entry removed'
   t.done()
 
 exports.test_remove_nonexistent_key = (t) ->
@@ -96,6 +104,7 @@ exports.test_remove_nonexistent_key = (t) ->
   t.equal (c.get 'a'), 1, 'first entry value should have been set'
   t.ok (c.has 'b'), 'second entry should be present'
   t.equal (c.get 'b'), 2, 'second entry value should have been set'
+  t.equal c.size(), 2, 'two entries added, no entries removed'
   t.done()
 
 exports.test_dump_format = (t) ->
