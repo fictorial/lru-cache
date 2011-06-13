@@ -10,12 +10,12 @@ object causes the least-recently-used item to be purged.
     LRUCache = (require 'lru-cache').LRUCache
     max_item_count = 3
     c = new LRUCache max_item_count
-    c.set 'A', 1
-    c.set 'B', 2
-    c.set 'C', 3
-    c.set 'D', 4  # A purged; least to most used: BCD
+    c.put 'A', 1
+    c.put 'B', 2
+    c.put 'C', 3
+    c.put 'D', 4  # A purged; least to most used: BCD
     c.get 'B'     # least to most used: CDB
-    c.set 'E', 5  # C purged; least to most used: DBE
+    c.put 'E', 5  # C purged; least to most used: DBE
     c.remove 'B'  # least to most used: DE
 
 ## Tests
@@ -24,7 +24,7 @@ Run unit tests with: `nodeunit lru-cache.coffee`
 
 ## Notes
 
-Operations set, get, and remove run in O(N).
+Based on a doubly-linked list. Operations are O(1).
 
 ## Author
 

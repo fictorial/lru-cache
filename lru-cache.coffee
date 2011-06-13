@@ -1,48 +1,80 @@
-#!/usr/bin/env nodeunit
+# LRU Cache based on doubly-linked list.
+# Head:Tail::Oldest:Newest
+
+class Entry
+  constructor: (@k, @v) ->
+    @p = @n = undefined
 
 class LRUCache
-  constructor: (@max_items = Infinity) ->
-    [@items, @order] = [{}, []]
+  constructor: (@limit = Infinity) ->
+    @m = {}
+    @h = @t = undefined
+    @n = 0
 
-  set: (key, value) ->
-    @remove key
-    @items[key] = value
-    @order.push key
-    @remove @order.shift() if @order.length > @max_items
+  put: (k, v) ->
+    e = new Entry k,v
+    @m[k] = e
+    if @t
+      @t.n = e
+      e.p = @t
+    else
+      @h = e
+    @t = e
+    @purge() if ++@n > @limit
     @
 
-  get: (key) ->
-    value = @items[key]
-    return null unless value?
-    @set key, value
+  purge: ->
+    e = @h
+    if e
+      if @h.n?
+        @h = @h.n
+        @h.p = undefined
+      else
+        @h = undefined
+      e.n = e.p = undefined
+      delete @m[e.k]
+    e
 
-  remove: (key) ->
-    delete @items[key]
-    for item, index in @order when item is key
-      @order.splice index, 1
-      return true
-    false
+  get: (k) ->
+    e = @m[k]
+    return undefined unless e?
+    return e.v if e is @t
+    if e.n
+      if e is @h
+        @h = e.n
+      e.n.p = e.p
+    if e.p
+      e.p.n = e.n
+    e.n = undefined
+    e.p = @t
+    @t.n = e if @t
+    @t = e
+    e.v
+
+  remove: (k) ->
+    e = @m[k]
+    return undefined unless e?
+    delete @m[e.k]
+    if e.n? and e.p? # middle
+      e.p.n = e.n
+      e.n.p = e.p
+    else if e.n?     # head
+      e.n.p = undefined
+      @h = e.n
+    else if e.p?     # tail
+      e.p.n = undefined
+      @t = e.p
+    e.v
+
+  has: (k) -> @m[k]?
+
+  dump: ->
+    s = '[ '
+    n = @h
+    while n?
+      s += n.k + " "
+      n = n.n
+    s += ']'
+    s
 
 exports.LRUCache = LRUCache
-
-exports.test_basics = (t) ->
-  c = new LRUCache 3
-  c.set('A', 1).set('B', 2).set('C', 3)
-
-  t.deepEqual {A:1, B:2, C:3}, c.items
-  t.deepEqual ['A', 'B', 'C'], c.order
-
-  c.set 'D', 4
-  t.deepEqual {B:2, C:3, D:4}, c.items
-  t.deepEqual ['B', 'C', 'D'], c.order
-
-  c.get 'B'
-  t.deepEqual {B:2, C:3, D:4}, c.items
-  t.deepEqual ['C', 'D', 'B'], c.order
-
-  c.remove 'D'
-  t.deepEqual {B:2, C:3}, c.items
-  t.deepEqual ['C', 'B'], c.order
-
-  t.done()
-
