@@ -20,7 +20,7 @@ object causes the least-recently-used item to be purged.
 
 ## Tests
 
-Run unit tests with: `nodeunit lru-cache.coffee`
+Run unit tests with: `nodeunit test.coffee`
 
 ## Notes
 
