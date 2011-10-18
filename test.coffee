@@ -1,6 +1,6 @@
 #!/usr/bin/env nodeunit
 
-LRUCache = (require 'lru-cache').LRUCache
+LRUCache = (require './lru-cache').LRUCache
 
 exports.test_one_entry = (t) ->
   c = new LRUCache 3
@@ -10,6 +10,7 @@ exports.test_one_entry = (t) ->
   t.equal (c.get 'a'), 1, 'value should be set'
   t.equal c.size(), 1, 'only one entry added'
   t.done()
+
 
 exports.test_two_entries = (t) ->
   c = new LRUCache 3
@@ -114,3 +115,19 @@ exports.test_dump_format = (t) ->
   c.put 'c', 3
   t.equal c.dump(), '[ a b c ]'
   t.done()
+
+
+exports.test_put_duplicate_keys = (t) ->
+   c = new LRUCache 10
+   c.put 'a', 1
+   c.put 'b', 2
+   c.put 'c', 3
+   t.equal c.size(), 3, 'three entries added, no entries removed'
+   t.equal (c.get 'b'), 2, 'second entry should have been set '
+   c.put 'a', 10
+   c.put 'b', 10
+   t.equal c.size(), 3, 'two additional puts with same key'
+   t.equal (c.get 'b'), 10, 'second entry should have been set again'
+   t.done()
+
+
