@@ -88,4 +88,5 @@ class LRUCache
 
   size: -> @n
 
-exports.LRUCache = LRUCache
+outside = exports ? this
+outside.LRUCache = LRUCache
