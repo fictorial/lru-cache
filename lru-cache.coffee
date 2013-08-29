@@ -12,7 +12,14 @@ class LRUCache
     @n = 0
 
   put: (k, v) ->
-    e = new Entry k,v
+    pv = @get k
+    unless pv is undefined
+      e=@m[k]
+      e.k=k
+      e.v=v
+      return @
+    else
+      e = new Entry k,v
     @m[k] = e
     if @t
       @t.n = e
@@ -81,4 +88,5 @@ class LRUCache
 
   size: -> @n
 
-exports.LRUCache = LRUCache
+outside = exports ? this
+outside.LRUCache = LRUCache
